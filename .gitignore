@@ -1,0 +1,9 @@
+*venv
+*.egg-info
+*.pyc
+__pycache__
+.vscode
+*.db
+.coverage
+*.pem
+*/static/temp/*
