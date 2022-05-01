@@ -11,6 +11,8 @@ gunicorn = "*"
 opencv-python-headless = "*"
 
 [dev-packages]
+pylint = "*"
+black = "*"
 
 [requires]
 python_version = "3.9"
