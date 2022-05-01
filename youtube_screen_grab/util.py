@@ -19,7 +19,7 @@ def remove_old(dir):
         os.remove(f"{dir}/{file}")
 
 
-def random_image(img_dir = "./static/imgs"):
+def random_image(img_dir="./static/imgs"):
     """
     Return a random image from the ones in the static/ directory
     """
@@ -28,15 +28,14 @@ def random_image(img_dir = "./static/imgs"):
     return img_path
 
 
-def download(url, path = "static/single"):
+def download(url, path="static/single"):
     ydl_opts = {
-        'outtmpl': f"{path}/{'%(title)s-%(id)s.%(ext)s'}",
-        'overwrites': True,
-        'format':'135' # Fun fact, has to be string
+        "outtmpl": f"{path}/{'%(title)s-%(id)s.%(ext)s'}",
+        "overwrites": True,
+        "format": "135",  # Fun fact, has to be string
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
-
 
 
 def video_cut(src, destination):
@@ -46,12 +45,13 @@ def video_cut(src, destination):
         cap = cv2.VideoCapture(video_path)
         frame_rate = cap.get(5)
         count = 0
-        while(cap.isOpened()):
+        while cap.isOpened():
             frame_id = cap.get(1)
             ret, frame = cap.read()
-            if (ret != True):
+            if ret != True:
                 break
-            if (frame_id % math.floor(frame_rate)*60 == 0):
-                name =image_name + str(count).zfill(5) + ".jpg";count+=1            
+            if frame_id % math.floor(frame_rate) * 60 == 0:
+                name = image_name + str(count).zfill(5) + ".jpg"
+                count += 1
                 cv2.imwrite(f"{destination}/{name}", frame)
     cap.release()
