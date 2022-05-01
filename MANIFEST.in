@@ -1,3 +1,0 @@
-graft youtube_screen_grab/static
-graft youtube_screen_grab/flaskr/templates
-global-exclude *.pyc
