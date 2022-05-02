@@ -12,6 +12,7 @@ from youtube_screen_grab.util import download, remove_old, video_cut, random_ima
 
 bp = Blueprint("/new", __name__)
 
+
 @celery.task
 def new_video(url):
     print("test")
@@ -24,6 +25,7 @@ def new_video(url):
     video_cut(video_path, "./youtube_screen_grab/static/temp")
     image_path = random_image("./youtube_screen_grab/static/temp")
     return image_path
+
 
 # @bp.route("/new", methods=["GET", "POST"])
 # def new():
@@ -47,35 +49,33 @@ def new():
         if request.form.get("submit"):
             form_data = request.form
             url = form_data["new_video"]
-            flash(f'Getting {url}')
+            flash(f"Getting {url}")
             task = new_video.delay(url)
-            return redirect(url_for('/new.taskstatus',task_id=task.id))       
+            return redirect(url_for("/new.taskstatus", task_id=task.id))
         if request.form["random_image"]:
             image_path = random_image(img_dir="./youtube_screen_grab/static/temp")
             return render_template("new.html", image=f"static/temp/{image_path}")
     else:
         return render_template("new.html")
 
-@bp.route('/taskstatus/<task_id>')
+
+@bp.route("/taskstatus/<task_id>")
 def taskstatus(task_id):
     task = new_video.AsyncResult(task_id)
-    if task.state == 'PENDING':
+    if task.state == "PENDING":
         # job did not start yet
+        response = {"state": task.state, "status": "Pending..."}
+    elif task.state != "FAILURE":
         response = {
-            'state': task.state,
-            'status': 'Pending...'
+            "state": task.state,
+            "video": task.info,
         }
-    elif task.state != 'FAILURE':
-        response = {
-            'state': task.state,
-            'video': task.info,
-        }
-        if 'result' in task.info:
-            response['result'] = task.info['result']
+        if "result" in task.info:
+            response["result"] = task.info["result"]
     else:
         # something went wrong in the background job
         response = {
-            'state': task.state,
-            'status': str(task.info),  # this is the exception raised
+            "state": task.state,
+            "status": str(task.info),  # this is the exception raised
         }
     return jsonify(response)

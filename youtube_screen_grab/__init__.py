@@ -3,7 +3,11 @@ import os
 from flask import Flask
 from celery import Celery
 
-celery = Celery(__name__, broker='redis://localhost:6379/0',result_backend = 'redis://localhost:6379/0')
+celery = Celery(
+    __name__,
+    broker="redis://localhost:6379/0",
+    result_backend="redis://localhost:6379/0",
+)
 
 
 def create_app(test_config=None):
@@ -13,8 +17,8 @@ def create_app(test_config=None):
         SECRET_KEY="dev",
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
-    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+    app.config["CELERY_BROKER_URL"] = "redis://localhost:6379/0"
+    app.config["CELERY_RESULT_BACKEND"] = "redis://localhost:6379/0"
     celery.conf.update(app.config)
     if test_config is None:
         # load the instance config, if it exists, when not testing

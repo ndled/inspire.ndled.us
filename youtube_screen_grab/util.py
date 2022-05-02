@@ -55,5 +55,3 @@ def video_cut(src, destination):
                 count += 1
                 cv2.imwrite(f"{destination}/{name}", frame)
     cap.release()
-
-
