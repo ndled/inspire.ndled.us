@@ -9,6 +9,8 @@ yt-dlp = "*"
 flask = "*"
 gunicorn = "*"
 opencv-python-headless = "*"
+redis = "*"
+celery = "*"
 
 [dev-packages]
 pylint = "*"
