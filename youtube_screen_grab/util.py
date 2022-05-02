@@ -40,6 +40,7 @@ def download(url, path="static/single"):
 
 def video_cut(src, destination):
     for file in os.listdir(src):
+        logger.info(f"started {src}")
         video_path = f"{src}/{file}"
         image_name = os.path.basename(video_path)
         cap = cv2.VideoCapture(video_path)
