@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+{% for message in get_flashed_messages() %}
+<p style="color: red;">{{ message }}</p>
+{% endfor %}
 <form method="post">
 
   <table>
