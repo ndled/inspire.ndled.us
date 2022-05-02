@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{video_name}}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<h2>{{status}}</h2>
+<form method="post">
+  </table>
+    <input type="submit" value = "Random Image" name="random_image"/>
+</form>
+
+<img src="{{image}}" alt="{{imgL}}" style="width:100%">
+
+{% endblock %}

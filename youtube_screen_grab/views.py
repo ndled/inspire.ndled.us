@@ -1,8 +1,6 @@
 from flask import render_template
 from flask import request
 from flask import Blueprint
-from flask import flash
-from flask import jsonify
 from flask import url_for
 from flask import redirect
 
@@ -10,72 +8,53 @@ import os
 from youtube_screen_grab import celery
 from youtube_screen_grab.util import download, remove_old, video_cut, random_image
 
-bp = Blueprint("/new", __name__)
+bp = Blueprint("/", __name__)
 
 
 @celery.task
 def new_video(url):
-    print("test")
-    if os.path.exists("./youtube_screen_grab/static/temp/"):
-        remove_old("./youtube_screen_grab/static/temp/")
+    url_id = url.split("v=")[-1]
+    if os.path.exists(f"./youtube_screen_grab/static/temp/{url_id}"):
+        remove_old(f"./youtube_screen_grab/static/temp/{url_id}")
     else:
-        os.makedirs("./youtube_screen_grab/static/temp/")
-    download(url, "./youtube_screen_grab/static/temp")
-    video_path = "./youtube_screen_grab/static/temp/"
-    video_cut(video_path, "./youtube_screen_grab/static/temp")
-    image_path = random_image("./youtube_screen_grab/static/temp")
-    return image_path
+        os.makedirs(f"./youtube_screen_grab/static/temp/{url_id}")
+    download(url, f"./youtube_screen_grab/static/temp/{url_id}")
+    video_path = f"./youtube_screen_grab/static/temp/{url_id}"
+    video_cut(video_path, f"./youtube_screen_grab/static/temp/{url_id}")
+    return url
 
 
-# @bp.route("/new", methods=["GET", "POST"])
-# def new():
-#     if request.method == "POST":
-#         if request.form.get("submit"):
-#             form_data = request.form
-#             url = form_data["new_video"]
-#             flash(f'Getting {url}')
-#             new_video.delay(url)
-#             return render_template("new.html", image=f"static/temp/{image_path}")
-#         if request.form["random_image"]:
-#             image_path = random_image(img_dir="./youtube_screen_grab/static/temp")
-#             return render_template("new.html", image=f"static/temp/{image_path}")
-#     else:
-#         return render_template("new.html")
-
-
-@bp.route("/new", methods=["GET", "POST"])
+@bp.route("/", methods=["GET", "POST"])
 def new():
     if request.method == "POST":
         if request.form.get("submit"):
             form_data = request.form
             url = form_data["new_video"]
-            flash(f"Getting {url}")
-            task = new_video.delay(url)
-            return redirect(url_for("/new.taskstatus", task_id=task.id))
-        if request.form["random_image"]:
-            image_path = random_image(img_dir="./youtube_screen_grab/static/temp")
-            return render_template("new.html", image=f"static/temp/{image_path}")
+            url_id = url.split("v=")[-1]
+            if url_id in os.listdir("./youtube_screen_grab/static/temp/"):
+                return redirect(url_for("/.newurl", url_id=url_id))
+            else: 
+                task = new_video.delay(url)
+                return redirect(url_for("/.taskstatus", task_id=task.id))
     else:
-        return render_template("new.html")
+        results = [f for f in os.listdir("./youtube_screen_grab/static/temp/") if os.path.isdir(f"./youtube_screen_grab/static/temp/{f}")]
+        print(results)
+        return render_template("new.html", results = results)
 
 
-@bp.route("/taskstatus/<task_id>")
+@bp.route("/taskstatus/<task_id>", methods=["GET", "POST"])
 def taskstatus(task_id):
     task = new_video.AsyncResult(task_id)
-    if task.state == "PENDING":
-        # job did not start yet
-        response = {"state": task.state, "status": "Pending..."}
-    elif task.state != "FAILURE":
-        response = {
-            "state": task.state,
-            "video": task.info,
-        }
-        if "result" in task.info:
-            response["result"] = task.info["result"]
+    if task.state != "SUCCESS":
+        return render_template("task.html", video_name = "In Progress, this can take a while. Press random image to see if it's done", status = task.state)
     else:
-        # something went wrong in the background job
-        response = {
-            "state": task.state,
-            "status": str(task.info),  # this is the exception raised
-        }
-    return jsonify(response)
+        print(task.result.split('v=')[-1])
+        return redirect(url_for("/.newurl", url_id=task.result.split('v=')[-1]))
+
+@bp.route("/<url_id>", methods=["GET", "POST"])
+def newurl(url_id):
+    if os.path.exists(f"./youtube_screen_grab/static/temp/{url_id}"):
+        image_path = random_image(img_dir=f"./youtube_screen_grab/static/temp/{url_id}")
+        return render_template("task.html", image=f"./static/temp/{url_id}/{image_path}", video_name = image_path.split('.mp4')[0])
+    else:
+        return redirect(url_for("/.new"))

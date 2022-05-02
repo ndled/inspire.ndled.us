@@ -5,9 +5,6 @@
 {% endblock %}
 
 {% block content %}
-{% for message in get_flashed_messages() %}
-<p style="color: red;">{{ message }}</p>
-{% endfor %}
 <form method="post">
 
   <table>
@@ -16,9 +13,10 @@
       <input type="submit" name="submit"/>
     </tr>
   </table>
-    <input type="submit" value = "Random Image" name="random_image"/>
 </form>
-
-<img src="{{image}}" alt="{{imgL}}" style="width:100%">
+<h3>Previously Run Results</h3>
+{% for result in results %}
+<li><a href={{result}}>{{result}}</a></li>
+{% endfor %}
 
 {% endblock %}
