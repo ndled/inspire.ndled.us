@@ -48,7 +48,7 @@ def new():
                 return redirect(url_for("/.taskstatus", task_id=task.id))
             else:
                 flash("Nope! Should be a valid youtube url")
-                
+
                 return render_template("new.html", results=results)
     else:
         return render_template("new.html", results=results)
