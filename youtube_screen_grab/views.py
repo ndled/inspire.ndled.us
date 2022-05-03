@@ -36,13 +36,15 @@ def new():
     for folder in os.listdir("./youtube_screen_grab/static/temp/"):
         if os.path.isdir(f"./youtube_screen_grab/static/temp/{folder}"):
             if len(folder) == 11:
-                results.append(folder)
+                if os.listdir(f"./youtube_screen_grab/static/temp/{folder}"):
+                    results.append(folder)
     if request.method == "POST":
         if request.form.get("submit"):
             form_data = request.form
             url, url_id = youtube_url_handler(form_data["new_video"])
             if url_id in os.listdir("./youtube_screen_grab/static/temp/"):
-                return redirect(url_for("/.newurl", url_id=url_id))
+                if os.listdir(f"./youtube_screen_grab/static/temp/{url_id}"):
+                    return redirect(url_for("/.newurl", url_id=url_id))
             elif len(url_id) == 11:
                 task = new_video.delay(url, url_id)
                 return redirect(url_for("/.taskstatus", task_id=task.id))
