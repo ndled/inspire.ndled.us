@@ -44,9 +44,8 @@ def new():
         results = [
             f
             for f in os.listdir("./youtube_screen_grab/static/temp/")
-            if os.path.isdir(f"./youtube_screen_grab/static/temp/{f}")
+            if os.path.isdir(f"./youtube_screen_grab/static/temp/{f}" and len(f) == 11)
         ]
-        print(results)
         return render_template("new.html", results=results)
 
 

@@ -60,8 +60,8 @@ def video_cut(src, destination):
 
 
 def youtube_url_handler(url):
-    if len(url.split("=v")[-1]) == 11:
-        url_id = url.split("=v")[-1]
+    if len(url.split("v=")[-1]) == 11:
+        url_id = url.split("v=")[-1]
     elif len(url) == 11:
         url_id = url
         url = f"https://www.youtube.com/watch?v={url_id}"
