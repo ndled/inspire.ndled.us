@@ -1,4 +1,4 @@
-'''Entry point for gunicorn'''
+"""Entry point for gunicorn"""
 
 from youtube_screen_grab import create_app
 
