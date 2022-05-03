@@ -41,11 +41,11 @@ def new():
                 task = new_video.delay(url, url_id)
                 return redirect(url_for("/.taskstatus", task_id=task.id))
     else:
-        results = [
-            f
-            for f in os.listdir("./youtube_screen_grab/static/temp/")
-            if os.path.isdir(f"./youtube_screen_grab/static/temp/{f}" and len(f) == 11)
-        ]
+        results = []
+        for folder in os.listdir("./youtube_screen_grab/static/temp/"):
+            if os.path.isdir(folder):
+                if len(folder) == 11:
+                    results.append(folder)
         return render_template("new.html", results=results)
 
 
@@ -59,7 +59,6 @@ def taskstatus(task_id):
             status=task.state,
         )
     else:
-        print(task.result.split("v=")[-1])
         return redirect(url_for("/.newurl", url_id=task.result.split("v=")[-1]))
 
 
