@@ -42,15 +42,13 @@ def new():
         if request.form.get("submit"):
             form_data = request.form
             url, url_id = youtube_url_handler(form_data["new_video"])
-            if url_id in os.listdir("./youtube_screen_grab/static/temp/"):
-                if os.listdir(f"./youtube_screen_grab/static/temp/{url_id}"):
-                    return redirect(url_for("/.newurl", url_id=url_id))
+            if url_id in results:
+                return redirect(url_for("/.newurl", url_id=url_id))
             elif len(url_id) == 11:
                 task = new_video.delay(url, url_id)
                 return redirect(url_for("/.taskstatus", task_id=task.id))
-            else:
-                flash("Nope! Should be a valid youtube url")
-                return render_template("new.html", results=results)
+            flash("Nope! Should be a valid youtube url")
+            return render_template("new.html", results=results)
         else:
             flash("need a url")
             return render_template("new.html", results=results)
