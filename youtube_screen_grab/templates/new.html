@@ -6,7 +6,6 @@
 
 {% block content %}
 <form method="post">
-
   <table>
     <tr>
       <input type="text" name="new_video"/>
@@ -16,7 +15,6 @@
 </form>
 <h3>Previously Run Results</h3>
 {% for result in results %}
-<li><a href={{result}}>{{result}}</a></li>
+<li><a href={{result}}>{{name[loop.index-1]}}</a></li>
 {% endfor %}
-
 {% endblock %}
