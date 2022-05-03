@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from ast import If
 import logging
 import os
 import random
@@ -34,6 +33,7 @@ def download(url, path="static/single"):
         "outtmpl": f"{path}/{'%(title)s-%(id)s.%(ext)s'}",
         "overwrites": True,
         "format": "135",  # Fun fact, has to be string
+        "max_filesize": "250M"
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])

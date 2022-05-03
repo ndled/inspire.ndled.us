@@ -6,7 +6,13 @@ from flask import redirect
 
 import os
 from youtube_screen_grab import celery
-from youtube_screen_grab.util import download, remove_old, video_cut, random_image, youtube_url_handler
+from youtube_screen_grab.util import (
+    download,
+    remove_old,
+    video_cut,
+    random_image,
+    youtube_url_handler,
+)
 
 bp = Blueprint("/", __name__)
 
