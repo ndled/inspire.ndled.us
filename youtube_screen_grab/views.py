@@ -32,6 +32,11 @@ def new_video(url, url_id):
 
 @bp.route("/", methods=["GET", "POST"])
 def new():
+    results = []
+    for folder in os.listdir("./youtube_screen_grab/static/temp/"):
+        if os.path.isdir(f"./youtube_screen_grab/static/temp/{folder}"):
+            if len(folder) == 11:
+                results.append(folder)
     if request.method == "POST":
         if request.form.get("submit"):
             form_data = request.form
@@ -43,13 +48,9 @@ def new():
                 return redirect(url_for("/.taskstatus", task_id=task.id))
             else:
                 flash("Nope! Should be a valid youtube url")
+                
+                return render_template("new.html", results=results)
     else:
-        results = []
-        for folder in os.listdir("./youtube_screen_grab/static/temp/"):
-            if os.path.isdir(folder):
-                print(folder)
-                if len(folder) == 11:
-                    results.append(folder)
         return render_template("new.html", results=results)
 
 
