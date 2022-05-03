@@ -3,6 +3,7 @@ from flask import request
 from flask import Blueprint
 from flask import url_for
 from flask import redirect
+from flask import flash
 
 import os
 from youtube_screen_grab import celery
@@ -37,13 +38,16 @@ def new():
             url, url_id = youtube_url_handler(form_data["new_video"])
             if url_id in os.listdir("./youtube_screen_grab/static/temp/"):
                 return redirect(url_for("/.newurl", url_id=url_id))
-            else:
+            elif len(url_id) == 11:
                 task = new_video.delay(url, url_id)
                 return redirect(url_for("/.taskstatus", task_id=task.id))
+            else:
+                flash("Nope! Should be a valid youtube url")
     else:
         results = []
         for folder in os.listdir("./youtube_screen_grab/static/temp/"):
             if os.path.isdir(folder):
+                print(folder)
                 if len(folder) == 11:
                     results.append(folder)
         return render_template("new.html", results=results)
