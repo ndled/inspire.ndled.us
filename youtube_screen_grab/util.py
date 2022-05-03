@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from ast import If
 import logging
 import os
 import random
@@ -56,3 +57,17 @@ def video_cut(src, destination):
                 count += 1
                 cv2.imwrite(f"{destination}/{name}", frame)
     cap.release()
+
+
+def youtube_url_handler(url):
+    if len(url.split("=v")[-1]) == 11:
+        url_id = url.split("=v")[-1]
+    elif len(url) == 11:
+        url_id = url
+        url = f"https://www.youtube.com/watch?v={url_id}"
+    elif len(url.split("/")[-1]) == 11:
+        url_id = url.split("/")[-1]
+        url = f"https://www.youtube.com/watch?v={url_id}"
+    else:
+        return url, "url_id_not_found"
+    return url, url_id

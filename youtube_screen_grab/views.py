@@ -6,14 +6,13 @@ from flask import redirect
 
 import os
 from youtube_screen_grab import celery
-from youtube_screen_grab.util import download, remove_old, video_cut, random_image
+from youtube_screen_grab.util import download, remove_old, video_cut, random_image, youtube_url_handler
 
 bp = Blueprint("/", __name__)
 
 
 @celery.task
-def new_video(url):
-    url_id = url.split("v=")[-1]
+def new_video(url, url_id):
     if os.path.exists(f"./youtube_screen_grab/static/temp/{url_id}"):
         remove_old(f"./youtube_screen_grab/static/temp/{url_id}")
     else:
@@ -29,12 +28,11 @@ def new():
     if request.method == "POST":
         if request.form.get("submit"):
             form_data = request.form
-            url = form_data["new_video"]
-            url_id = url.split("v=")[-1]
+            url, url_id = youtube_url_handler(form_data["new_video"])
             if url_id in os.listdir("./youtube_screen_grab/static/temp/"):
                 return redirect(url_for("/.newurl", url_id=url_id))
             else:
-                task = new_video.delay(url)
+                task = new_video.delay(url, url_id)
                 return redirect(url_for("/.taskstatus", task_id=task.id))
     else:
         results = [
