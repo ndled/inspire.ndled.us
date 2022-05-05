@@ -9,9 +9,6 @@ services:
     image: redis:latest
     hostname: redis
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: ndled/inspire
     hostname: web
     command: gunicorn --workers 3 --bind 0.0.0.0:5000 wsgi:app
