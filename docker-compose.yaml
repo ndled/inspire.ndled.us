@@ -1,4 +1,9 @@
 version: '3'
+volumes:
+  www:
+  conf:
+
+
 services:
   redis:
     image: redis:latest
@@ -7,6 +12,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ndled/inspire
     hostname: web
     command: gunicorn --workers 3 --bind 0.0.0.0:5000 wsgi:app
     volumes:
@@ -19,6 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ndled/inspire
     command: celery -A youtube_screen_grab.views worker -l INFO
     volumes:
       - .:/app
@@ -28,7 +35,18 @@ services:
       - redis
   nginx:
     build: ./nginx
+    image: ndled/inspire-nginx
     ports:
       - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - www:/var/www/certbot/:ro
+      - conf:/etc/nginx/ssl/:ro
     depends_on:
       - web
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - www:/var/www/certbot/:rw
+      - conf:/etc/letsencrypt/:rw
