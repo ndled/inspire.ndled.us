@@ -42,8 +42,4 @@ services:
       - conf:/etc/nginx/ssl/:ro
     depends_on:
       - web
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - www:/var/www/certbot/:rw
-      - conf:/etc/letsencrypt/:rw
+
