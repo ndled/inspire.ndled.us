@@ -4,7 +4,7 @@ Simple webapp designed in flask that can chop of a youtube video and return rand
 
 - Read about how I made the project [here](https://www.ndled.us/python/2022/05/25/learning-flask-and-docker.html)
 
-- See it in action [here] (https://inspire.ndled.us/)
+- See it in action [here](https://inspire.ndled.us/)
 
 
 ## Technologies Used
